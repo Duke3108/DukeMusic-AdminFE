@@ -98,7 +98,7 @@ const AddSong = () => {
       <div className="flex flex-col gap-2.5">
         <p>Song album</p>
         <select onChange={(e) => setAlbum(e.target.value)} defaultValue={album} className="bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[150px]">
-          <option value='none'>None</option>
+          <option disabled selected value>None</option>
           {albumData.map((item,index) => (
             <option className="text-black" key={index} value={item.name}>{item.name}</option>
           ))}

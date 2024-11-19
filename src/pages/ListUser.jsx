@@ -13,7 +13,6 @@ const ListUser = () => {
   const msg = useSelector((state) => state.user?.msg)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  //let axiosJWT = createAxios(user,dispatch,loginSuccess)
   let axiosJWT = createAxios(user,dispatch,loginSuccess)
 
   const handleDelete = (id) => {
