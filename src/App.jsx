@@ -39,13 +39,13 @@ const App = () => {
         <div className={`${user ? 'pt-8 pl-5 sm:pt-12 sm:pl-12' : 'flex items-center justify-center'}`}>
           {user ?
           <Routes>
-            <Route path='/album/list'element={<ListAlbum/>}/>
+            <Route path='/album/'element={<ListAlbum/>}/>
             <Route path='/album/add'element={<AddAlbum/>}/>
-            <Route path='/song/list' element={<ListSong/>}/> 
+            <Route path='/song/' element={<ListSong/>}/> 
             <Route path='/song/add' element={<AddSong/>}/>
-            <Route path='/user/list' element={<ListUser/>}/> 
+            <Route path='/user/' element={<ListUser/>}/> 
             <Route path='/user/add' element={<AddUser/>}/>
-            <Route path='/artist/list' element={<ListArtist/>}/> 
+            <Route path='/artist/' element={<ListArtist/>}/> 
             <Route path='/artist/add' element={<AddArtist/>}/>
             <Route path='/login'element={<Login/>}/>
             <Route path='/register'element={<SignUp/>}/>
@@ -54,7 +54,7 @@ const App = () => {
           <Routes>
               <Route path='/login'element={<Login/>}/>
               <Route path='/register'element={<SignUp/>}/>
-            </Routes>
+          </Routes>
         }
           
             

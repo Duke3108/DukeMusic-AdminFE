@@ -3,16 +3,21 @@ import { assets } from "../assets/assets"
 import axios from 'axios'
 import { url } from "../App"
 import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom"
 
 const AddSong = () => {
 
   const [image,setImage] = useState(false)
   const [song,setSong] = useState(false)
   const [name,setName] = useState("")
-  const [desc,setDesc] = useState("")
-  const [album,setAlbum] = useState("none")
+  const [artistName,setArtistName] = useState("")
+
+  const [albumName,setAlbumName] = useState("")
+  const [albumId,setAlbumId] = useState("")
   const [loading,setLoading] = useState(false)
   const [albumData,setAlbumData] = useState([])
+  const [artistData,setArtistData] = useState({})
+  const navigate = useNavigate()
 
   const onSubmitHandler = async (e) => {
     e.preventDefault()
@@ -20,22 +25,30 @@ const AddSong = () => {
     try {
       const formData = new FormData()
       formData.append('name',name)
-      formData.append('desc',desc)
       formData.append('image',image)
       formData.append('audio',song)
-      formData.append('album',album)
 
+      const artistId = artistData.data.artists._id
+      if(!artistId){
+        const artist = await axios.get(`${url}/api/artist/${artistName}`)
+        formData.append('artistId',artist.data.artists._id)
+      }
+      if(!albumId){
+        formData.append('albumId',"")
+      }
+      formData.append('artistId',artistId)
+      formData.append('albumId',albumId)
       const response = await axios.post(`${url}/api/song/add`,formData)
 
-      if(response.data.success){
-        toast.success("Song added")
+      if(response.data.song){
+        toast.success(response.data.message)
         setName("")
-        setDesc("")
-        setAlbum("none")
+        setAlbumName("none")
         setImage(false)
         setSong(false)
+        navigate('song/')
       }else{
-        toast.error("Something went wrong")
+        toast.error(response.data.message)
       }
     } catch (error) {
       toast.error(`${error} occured`)
@@ -56,9 +69,33 @@ const AddSong = () => {
     }
   }
 
+  const loadArtistData = async () => {
+    if(albumName ){
+      if(albumName !== "None"){
+        const selectedAlbum = await axios.get(`${url}/api/album/${albumName}`)
+        setAlbumId(selectedAlbum.data._id)
+        const id = selectedAlbum.data.artistId
+        const artist = await axios.get(`${url}/api/artist/${id}`)
+        setArtistData(artist)
+        setArtistName(artist.data.artists.name)
+      }else{
+        setArtistName("")
+      }
+    }
+  }
+
+  const handleSelectAlbum = (e) => {
+    setAlbumName(e.target.value)
+  }
+
+  useEffect(() => {
+    loadArtistData()
+  },[albumName])
+
   useEffect(() => {
     loadAlbumData()
   },[])
+
 
   return loading ? (
     <div className="grid place-items-center min-h-[80vh]">
@@ -69,7 +106,7 @@ const AddSong = () => {
 
       <div className="flex gap-8">
         <div className="flex flex-col gap-4">
-          <p>Upload song</p>
+          <p>Audio</p>
           <input onChange={(e) => setSong(e.target.files[0])} type="file" id="song" accept="audio/*" hidden/>
           <label htmlFor="song">
             <img src={song ? assets.upload_added : assets.upload_song } className="w-24 cursor-pointer"/>
@@ -77,7 +114,7 @@ const AddSong = () => {
         </div>
 
         <div className="flex flex-col gap-4">
-          <p>Upload Imgae</p>
+          <p>Thumbnail</p>
           <input onChange={(e) => setImage(e.target.files[0])} type="file" id="image" accept="image/*" hidden/>
           <label htmlFor="image">
             <img src={ image ? URL.createObjectURL(image) : assets.upload_area} className="w-24 cursor-pointer"/>
@@ -86,23 +123,24 @@ const AddSong = () => {
       </div>
 
       <div className="flex flex-col gap-2.5">
-        <p>Song name</p>
-        <input onChange={(e) => setName(e.target.value)} value={name} type="text" placeholder="Type Here" required className="bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[max(40vw,250px)]"/>
+        <p>Tên bài hát</p>
+        <input onChange={(e) => setName(e.target.value)} value={name} type="text" placeholder="Tên bài hát" required className="bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[500px] rounded-md"/>
       </div>
 
       <div className="flex flex-col gap-2.5">
-        <p>Song description</p>
-        <input onChange={(e) => setDesc(e.target.value)} value={desc} type="text" placeholder="Type Here" required className="bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[max(40vw,250px)]"/>
-      </div>
-
-      <div className="flex flex-col gap-2.5">
-        <p>Song album</p>
-        <select onChange={(e) => setAlbum(e.target.value)} defaultValue={album} className="bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[150px]">
-          <option disabled selected value>None</option>
+        <p>Album</p>
+        <select onChange={handleSelectAlbum} value={albumName}  className="bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[500px] rounded-md">
+          <option className="text-black" disabled selected value>--Album--</option>
+          <option className="text-black" value="None">None</option>
           {albumData.map((item,index) => (
             <option className="text-black" key={index} value={item.name}>{item.name}</option>
           ))}
         </select>
+      </div>
+
+      <div className="flex flex-col gap-2.5">
+        <p>Nghệ sĩ</p>
+        <input onChange={(e) => setArtistName(e.target.value)} value={artistName} type="text" placeholder="--Nghệ sĩ--" required className="bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[500px] rounded-md"/>
       </div>
 
       <button type="submit" className="text-base text-black bg-white py-2.5 px-14 cursor-pointer w-[150px]">Add</button>
