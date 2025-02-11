@@ -8,7 +8,7 @@ export const loginUser = async (user, dispatch, navigate) => {
     dispatch(loginStart())
     try {
         const res = await axios.post(`${url}/v1/auth/login`, user, {
-            withCredentials: true  // Đảm bảo cookies được gửi đi trong yêu cầu
+            withCredentials: true
         })
         dispatch(loginSuccess(res.data))
         navigate("/")

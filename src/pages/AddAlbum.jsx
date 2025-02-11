@@ -32,7 +32,6 @@ const addAlbum = () => {
       
       if(artist){
         formData.append('artistId',artist.data.artists._id)
-        console.log(artist.data.artists._id)
       }else{
         formData.append('artistId',"")
       }
@@ -46,7 +45,7 @@ const addAlbum = () => {
         setImage(false)
         setArtistName("")
         setColour("#ffffff")
-        navigate('/artist/')
+        navigate('/album/')
       }else{
         toast.error(response.data.message)
       }

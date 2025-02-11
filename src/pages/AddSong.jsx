@@ -16,7 +16,7 @@ const AddSong = () => {
   const [albumId,setAlbumId] = useState("")
   const [loading,setLoading] = useState(false)
   const [albumData,setAlbumData] = useState([])
-  const [artistData,setArtistData] = useState({})
+  const [artistId,setArtistId] = useState('')
   const navigate = useNavigate()
 
   const onSubmitHandler = async (e) => {
@@ -28,11 +28,6 @@ const AddSong = () => {
       formData.append('image',image)
       formData.append('audio',song)
 
-      const artistId = artistData.data.artists._id
-      if(!artistId){
-        const artist = await axios.get(`${url}/api/artist/${artistName}`)
-        formData.append('artistId',artist.data.artists._id)
-      }
       if(!albumId){
         formData.append('albumId',"")
       }
@@ -46,7 +41,7 @@ const AddSong = () => {
         setAlbumName("none")
         setImage(false)
         setSong(false)
-        navigate('song/')
+        navigate('/song/')
       }else{
         toast.error(response.data.message)
       }
@@ -74,10 +69,10 @@ const AddSong = () => {
       if(albumName !== "None"){
         const selectedAlbum = await axios.get(`${url}/api/album/${albumName}`)
         setAlbumId(selectedAlbum.data._id)
-        const id = selectedAlbum.data.artistId
-        const artist = await axios.get(`${url}/api/artist/${id}`)
-        setArtistData(artist)
-        setArtistName(artist.data.artists.name)
+        setArtistId(selectedAlbum.data.artistId._id)
+        const name = selectedAlbum.data.artistId.name
+        //console.log(selectedAlbum,name)
+        setArtistName(name)
       }else{
         setArtistName("")
       }
