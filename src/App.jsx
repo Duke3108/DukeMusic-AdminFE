@@ -16,7 +16,7 @@ import SignUp from "./pages/SignUp";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 
-export const url = "https://api-duke-music.onrender.com";
+export const url = "https://duke-music-be.onrender.com";
 
 const App = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
